@@ -1,16 +1,119 @@
 {% extends "base.html" %}
 {% block content %}
-  <h1>Index</h1>
-  <button type="button" class="btn btn-primary mt-2 mb-4 px-5">Primary</button>
-  <p>
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur urna tellus, congue quis bibendum congue, malesuada vitae lectus. Aenean et arcu non elit efficitur bibendum a porta velit. Praesent tempor faucibus faucibus. Praesent et ipsum purus. Etiam sagittis nunc sit amet tellus euismod, non molestie ante vehicula. Donec augue leo, imperdiet et dui id, rutrum vehicula ipsum. Curabitur non laoreet nulla, a molestie arcu. Sed efficitur et sem at finibus. Fusce maximus porta purus, at aliquam diam ultricies ac. Nulla faucibus tristique nunc, pharetra laoreet risus mattis nec. Integer volutpat pretium velit, nec porta odio egestas ut. Curabitur quis facilisis nibh. Vivamus sed ex nec dolor blandit dapibus eu ut orci. Duis sem sem, dictum at magna in, iaculis vehicula diam. Morbi feugiat elementum urna eget vestibulum.
-    <br><br>
-    Pellentesque eleifend congue aliquet. Nullam tristique rutrum magna et molestie. Phasellus egestas purus non augue suscipit sagittis. Donec vestibulum condimentum sem, non iaculis nisi mollis at. In ultricies feugiat feugiat. Fusce gravida consectetur massa non aliquam. Ut et nisi nunc. Praesent consectetur, arcu at mollis interdum, turpis turpis maximus purus, quis accumsan lectus leo ac nisl. Donec tellus ipsum, dapibus eget consectetur sit amet, mollis sit amet massa. Nam malesuada congue nisl non pellentesque. Morbi ornare metus sed orci placerat, ac consequat odio ultrices.
-    <br><br>
-    Quisque facilisis metus sit amet justo posuere viverra. Quisque quis efficitur nibh, quis interdum diam. Suspendisse tempor tristique sem eu hendrerit. Sed volutpat aliquet tristique. Etiam aliquet sit amet lacus sed consectetur. In hac habitasse platea dictumst. Sed nec orci velit. Nunc orci purus, dapibus vitae mi in, dictum suscipit metus. Suspendisse tempus vestibulum quam, rhoncus lacinia erat mattis ac. Donec viverra nibh dolor, eu maximus ante hendrerit ut. Nullam fringilla, lorem in sagittis blandit, justo ante suscipit erat, in accumsan nisl nunc id sem.
-    <br><br>
-    Phasellus ac velit non sem congue rutrum eget commodo lacus. Morbi pulvinar lorem nisl, in congue odio suscipit non. Fusce nibh risus, condimentum sed sapien at, accumsan feugiat enim. Donec id tristique risus. Etiam vel commodo nibh. Aenean sit amet urna in mi volutpat malesuada facilisis quis sapien. Etiam nibh quam, viverra vel enim at, suscipit blandit ligula. Nulla hendrerit nunc metus, sed aliquam nunc efficitur ac. Fusce accumsan neque vitae vulputate vulputate. Mauris dui sem, ultricies in tortor at, sagittis elementum odio. Vivamus non dolor sed lorem aliquet venenatis. Donec felis metus, aliquam a sodales in, ultrices ac nisi. Vestibulum tempor sagittis libero. Phasellus laoreet est vel molestie fringilla.
-    <br><br>
-    Maecenas facilisis est ut sapien sodales pharetra. Integer vulputate aliquet erat porttitor mattis. Maecenas dapibus, leo sed tempus mollis, mauris dui aliquet nisi, et pellentesque tortor nulla sed tortor. Donec sed ante vitae urna pretium condimentum. Morbi ac ipsum ultricies, posuere odio id, lobortis arcu. Etiam a urna ut diam sodales pretium ut non quam. Donec convallis metus et odio tristique facilisis. Fusce urna lacus, porta ac neque vel, mollis lobortis quam. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Ut ullamcorper quis lectus ut elementum.
-  </p>
+  <div id="about">
+    <h2 class="mb-4">
+      About Me
+    </h2>
+    <p class="mb-4">
+      My name is Pierre-Olivier Trottier. I am a software developer, graphic designer, and music producer based in Montreal, Canada.
+      <br><br>
+      I studied Software Engineering at Concordia University in Montreal and was part of the CO-OP program. I have had the chance to work for multiple awesome companies such as Ubisoft and Olympus Scientific Solution.
+    </p>
+    <a class="btn btn-primary rounded-pill px-4 py-2 text-white text-uppercase"
+       style="font-weight: 500;"
+       target="_blank"
+       href="documents/resume.pdf">
+      Download My Resume
+    </a>
+  </div>
+  <hr class="my-5">
+  <div id="skills">
+    <h2 class="mb-5">
+      Skill Set
+    </h2>
+    <p class="mb-5">
+      <b>FULL-STACK WEB DEVELOPMENT</b>
+      <br><br>
+      I have experience developing modern web-apps. I have worked on anything from a front-end server, to reactive content, to APIs and database queries.
+      <br><br>
+      Skills: VueJS, NodeJS, MySQL, NGINX, Docker
+    </p>
+    <p class="mb-5">
+      <b>SOFTWARE DEVELOPMENT</b>
+      <br><br>
+      I have experience developing many different kinds of applications, from low-level SDKs, to mobile applications, to enterprise-level tools.
+      <br><br>
+      Skills: C# (WPF & WinForms), C++, Java;
+    </p>
+    <p class="mb-5">
+      <b>GRAPHIC DESIGN</b>
+      <br><br>
+      I have designed logos and motion graphics for many different types of companies. I have also designed few websites, ranging from corporate pages to modern web-apps.
+      <br><br>
+      Skills: Logo Design, Web Design, Motion Graphics
+    </p>
+    <p>
+      <b>MUSIC PRODUCTION</b>
+      <br><br>
+      I have been DJing, producing, mixing and mastering songs for over 7 years now. I had the chance of having few songs released by labels and have self-released more songs to streaming services.
+      <br><br>
+      Skills: Production, Mixing, Mastering, Sound Design
+    </p>
+  </div>
+  <hr class="my-5">
+  <div id="projects">
+    <h2 class="mb-5">Projects</h2>
+    <p class="mb-5">
+      <b>Chargehub Beta</b>
+      <br><br>
+      VueJS Web App
+      <br><br>
+      I was responsible for the architecture and development of ChargeHub's Beta website. It runs in a Docker container on the Azure Cloud Platform.
+      <br><br>
+      <a href="https://beta.chargehub.com/">URL</a>
+    </p>
+    <p class="mb-5">
+      <b>Instaclone</b>
+      <br><br>
+      Firebase
+      <br><br>
+        Lead a team that built an Instagram Clone using a Vue.JS front-end and a Firebase back-end.
+      <br><br>
+      <a href="https://soen341-instaclone.web.app/">URL</a>
+    </p>
+    <p class="mb-5">
+      <b>VueJS Template</b>
+      <br><br>
+      VueJS CLI
+      <br><br>
+      I created a simple material design focused VueJS CLI template to help any new-comers start with a solid base that follows the preferred VueJS patterns.
+      <br><br>
+      <a href="https://template.p-o.design/">URL</a>
+      <span> | </span>
+      <a href="https://github.com/po-trottier/vuejs-material-template">Source Code</a>
+    </p>
+    <p class="mb-5">
+      <b>Various Algorithm</b>
+      <br><br>
+      Java
+      <br><br>
+      I developed many optimized algorithms. This example determines if a subtree can be found in a bigger parent tree.
+      <br><br>
+      <a href="https://github.com/po-trottier/is-subtree">Source Code</a>
+    </p>
+  </div>
+  <hr class="my-5">
+  <div id="contact">
+    <h2 class="mb-4">Contact Me</h2>
+    <form action="#">
+      <div class="col">
+        <label class="row">
+          <input placeholder="Name" class="mb-1">
+        </label>
+        <label class="row">
+          <input placeholder="Phone Number" class="mb-1">
+        </label>
+        <label class="row">
+          <input placeholder="E-mail Address" class="mb-1">
+        </label>
+        <textarea class="row" placeholder="Message"></textarea>
+        <button type="submit" class="row btn btn-primary rounded-pill mt-4 px-4">
+          Send
+        </button>
+        <button type="reset" class="btn btn-light rounded-pill mt-4 ml-4 px-4">
+          Clear
+        </button>
+      </div>
+    </form>
+  </div>
 {% endblock %}

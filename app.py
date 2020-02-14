@@ -6,14 +6,15 @@ app = Flask(__name__,
             static_folder='assets',
             template_folder='templates')
 
-# Configuration
+# Get Configuration File
 app.config.from_object('config')
 
-
-# Home Page
+# Define the routes
 @app.route('/')
 def home():
   return render_template('routes/index.html')
-
+@app.route('/blog')
+def blog():
+  return render_template('routes/blog.html')
 
 app.run(host='127.0.0.1', port=5000, debug=True)
