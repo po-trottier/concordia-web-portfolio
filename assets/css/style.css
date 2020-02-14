@@ -3,3 +3,10 @@
   margin: 8px !important;
   font-weight: 500;
 }
+
+.hero {
+  height: 100vh;
+  width: 100vw;
+  margin-top: -75px;
+  object-fit: cover;
+}

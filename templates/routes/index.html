@@ -1,10 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
-  {% include 'components/about.html' %}
-  <hr class="my-5">
-  {% include 'components/skills.html' %}
-  <hr class="my-5">
-  {% include 'components/projects.html' %}
-  <hr class="my-5">
-  {% include 'components/contact.html' %}
+  {% include 'components/hero.html' %}
+  <div class="py-5 container">
+    {% include 'components/about.html' %}
+    <hr class="my-5">
+    {% include 'components/skills.html' %}
+    <hr class="my-5">
+    {% include 'components/projects.html' %}
+    <hr class="my-5">
+    {% include 'components/contact.html' %}
+  </div>
 {% endblock %}
