@@ -1,0 +1,44 @@
+.text-primary {
+  color: #7c69e3 !important;
+}
+
+.bg-primary {
+  background-color: #7c69e3 !important;
+}
+
+.bg-dark {
+  background-color: #222529 !important;
+}
+
+.btn {
+  font-weight: 500;
+  text-transform: uppercase;
+  border-width: 2px;
+}
+
+.btn-primary {
+  border-color: #7c69e3;
+  background-color: #7c69e3;
+}
+
+.btn-primary:hover {
+  border-color: #534899;
+  background-color: #534899;
+}
+
+.btn-outline-primary {
+  border-color: #7c69e3;
+  color: #7c69e3 !important;
+}
+
+.btn-outline-primary:hover {
+  border-color: #7c69e3;
+  background-color: #7c69e3;
+  color: white !important;
+}
+
+.nav-link {
+  text-align: center !important;
+  margin: 8px !important;
+  font-weight: 500;
+}
