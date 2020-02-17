@@ -1,0 +1,43 @@
+<div class="bg-light py-5">
+  <div id="contact" class="container pt-4 pb-5">
+    <h2 class="mb-5 text-center">Contact Me</h2>
+    <div class="card shadow p-5 mx-auto" style="max-width: 700px;">
+      <form id="contactForm" method="post">
+        <!--Anti-Robot Field-->
+        <div class="row form-group px-3" style="display: none">
+          <label class="w-100">
+            <input name="subject" placeholder="Subject" type="text" class="form-control">
+          </label>
+        </div>
+        <!--Proper Fields-->
+        <div class="row">
+          <div class="col-6 form-group">
+            <label class="w-100">
+              <input name="name" placeholder="Name" type="text" required="required" class="form-control">
+            </label>
+          </div>
+          <div class="col-6 form-group">
+            <label class="w-100">
+              <input name="phone" placeholder="Phone Number" type="text" class="form-control">
+            </label>
+          </div>
+        </div>
+        <div class="row form-group px-3">
+          <label class="w-100">
+            <input name="email" placeholder="E-mail Address" type="email" required="required" class="form-control">
+          </label>
+        </div>
+        <div class="row form-group px-3">
+          <label class="w-100">
+            <textarea name="message" placeholder="Message" required="required" class="mb-0 form-control" style="min-height: 150px;"></textarea>
+          </label>
+        </div>
+        <div class="row mt-4 px-4">
+          <button type="submit" class="row btn btn-primary rounded-pill px-5 py-2 mx-auto">
+            Send Message
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
