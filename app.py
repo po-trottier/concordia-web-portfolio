@@ -20,7 +20,7 @@ def home():
     # Otherwise deal with the form
     else:
       print(request.form)
-      return render_template('routes/index.html')
+      return render_template('routes/contact.html')
   # Return the index.html file for any other type of request
   else:
     return render_template('routes/index.html')

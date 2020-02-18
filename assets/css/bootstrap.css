@@ -37,6 +37,10 @@
   color: white !important;
 }
 
+.border-light {
+  border-color: rgba(0, 0, 0, 0.125) !important;
+}
+
 .nav-link {
   text-align: center !important;
   margin: 8px !important;
