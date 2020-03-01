@@ -14,7 +14,7 @@
   <meta http-equiv="x-ua-compatible" content="IE=10">
 
   <!––FavIcon Import––>
-  <link rel="icon" href="favicon.svg">
+  <link rel="icon" href="/favicon.svg">
 
   <!––Bootstrap Import––>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -24,42 +24,51 @@
   <link rel="stylesheet" href="https:////cdn.materialdesignicons.com/4.9.95/css/materialdesignicons.min.css">
 
   <!––Custom CSS Import––>
-  <link rel="stylesheet" href="css/bootstrap.css">
-  <link rel="stylesheet" href="css/general.css">
-  <link rel="stylesheet" href="css/mdi.css">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="/css/bootstrap.css">
+  <link rel="stylesheet" href="/css/general.css">
+  <link rel="stylesheet" href="/css/mdi.css">
+  <link rel="stylesheet" href="/css/style.css">
 </head>
 
 <body>
-  <section>
-    <header style="position: sticky; top: 0; z-index: 10;">
+  <div class="fill-height bg-light">
+    <header class="header">
       {% include 'components/header.html' %}
     </header>
-    <section class="bg-light">
+    <section class="content">
       {% block content %}{% endblock %}
     </section>
-    <footer>
+    <footer class="footer">
       {% include 'components/footer.html' %}
     </footer>
-  </section>
+  </div>
 
-  <!––Smooth Scroll JS Import––>
-  <script src="https://cdn.jsdelivr.net/gh/cferdinandi/smooth-scroll@15/dist/smooth-scroll.polyfills.min.js"></script>
   <!––Bootstrap JS Import––>
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
   <!––Custom Javascript File––>
   <script>
-    // Initialize Smooth Scroll
-    const scroll = new SmoothScroll('a[href*="#"]', {
-      offset: function() {
-        return 75;
-      },
-    });
     // Hide Hamburger menu on Click
     $('.navbar-collapse a').click(function() {
         $(".navbar-collapse").collapse('hide');
+    });
+    // Add smooth scrolling to all links
+    $(document).ready(function(){
+      $("a").on('click', function(event) {
+        try {
+          if (this.hash !== "") {
+            event.preventDefault();
+            var hash = this.hash;
+            $('html, body').animate({
+              scrollTop: $(hash).offset().top - 77
+            }, 800, 'easeInOutCubic');
+          }
+        } catch(err) {
+          window.location.href = event.target.href;
+        }
+      });
     });
   </script>
 </body>

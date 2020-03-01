@@ -6,19 +6,19 @@
       <h5 class="mb-5">Here is a copy of the message you just sent:</h5>
       <div class="d-flex mx-auto">
           <p style="font-weight: 500;" class="mr-2">Name:</p>
-          <p>Test Name</p>
+          <p>{{ form.get('name') }}</p>
       </div>
       <div class="d-flex mx-auto">
           <p style="font-weight: 500;" class="mr-2">Phone Number:</p>
-          <p>(111) 111-1111</p>
+          <p>{{ form.get('phone') }}</p>
       </div>
       <div class="d-flex mx-auto">
           <p style="font-weight: 500;" class="mr-2">E-Mail:</p>
-          <p>test@test.com</p>
+          <p>{{ form.get('email') }}</p>
       </div>
       <div class="d-flex mx-auto">
           <p style="font-weight: 500;" class="mr-2">Message:</p>
-          <p>This is a test message</p>
+          <p>{{ form.get('message') }}</p>
       </div>
       <h5 class="mt-5 mb-4">I will try to contact you back as fast as possible.</h5>
       <a href="/" class="btn btn-primary py-3 px-5 mx-auto">Go Back</a>

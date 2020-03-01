@@ -21,7 +21,7 @@
   background-color: #7c69e3;
 }
 
-.btn-primary:hover {
+.btn-primary:hover, .btn-primary:not(:disabled):not(.disabled):active {
   border-color: #534899;
   background-color: #534899;
 }
@@ -31,7 +31,7 @@
   color: #7c69e3 !important;
 }
 
-.btn-outline-primary:hover {
+.btn-outline-primary:hover, .btn-outline-primary:not(:disabled):not(.disabled):active {
   border-color: #7c69e3;
   background-color: #7c69e3;
   color: white !important;

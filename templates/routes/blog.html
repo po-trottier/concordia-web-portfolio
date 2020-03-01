@@ -5,7 +5,9 @@
     <div class="row">
       {% for n in range(12) %}
         <div class="col-lg-6">
-          {% include 'components/blog/post.html' %}
+          {% with post_id=n %}
+           {% include 'components/blog/preview.html' %} 
+          {% endwith %}
         </div>
       {% endfor %}
     </div>
