@@ -1,37 +1,25 @@
+{% import "bootstrap/wtf.html" as wtf %}
+
 <div class="bg-light py-5">
   <div id="contact" class="container pt-4 pb-5">
     <h2 class="mb-5 text-center">Contact Me</h2>
     <div class="card p-5 mx-auto" style="max-width: 700px;">
       <form id="contactForm" method="post">
         <!--Anti-Robot Field-->
-        <div class="row form-group px-3" style="display: none">
-          <label class="w-100">
-            <input name="subject" placeholder="Subject" type="text" class="form-control">
-          </label>
-        </div>
+        {{ form.csrf_token }}
+        <!--Errors list-->
+        {{ wtf.form_errors(form, hiddens="only") }}
         <!--Proper Fields-->
         <div class="row">
-          <div class="col-md-6 form-group">
-            <label class="w-100">
-              <input name="name" placeholder="Name" type="text" required="required" class="form-control">
-            </label>
+          <div class="col-md-6">
+            {{ wtf.form_field(form.name, class='form-control', placeholder='Enter your name') }}
           </div>
-          <div class="col-md-6 form-group">
-            <label class="w-100">
-              <input name="phone" placeholder="Phone Number" type="text" class="form-control">
-            </label>
+          <div class="col-md-6">
+            {{ wtf.form_field(form.phone, class='form-control', placeholder='Enter your phone number') }}
           </div>
         </div>
-        <div class="row form-group px-3">
-          <label class="w-100">
-            <input name="email" placeholder="E-mail Address" type="email" required="required" class="form-control">
-          </label>
-        </div>
-        <div class="row form-group px-3">
-          <label class="w-100">
-            <textarea name="message" rows="6" placeholder="Message" required="required" class="mb-0 form-control"></textarea>
-          </label>
-        </div>
+        {{ wtf.form_field(form.email, class='form-control', placeholder='Enter your email address') }}
+        {{ wtf.form_field(form.message, rows='5', class='form-control', style='min-height: 40px;', placeholder='Enter your message (Max 500 characters)') }}
         <div class="row mt-4 px-4">
           <button type="submit" class="row btn btn-primary rounded-pill px-5 py-2 mx-auto">
             Send Message

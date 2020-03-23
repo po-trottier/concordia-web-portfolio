@@ -8,10 +8,12 @@
           <p style="font-weight: 500;" class="mr-2">Name:</p>
           <p>{{ form.get('name') }}</p>
       </div>
-      <div class="d-flex mx-auto">
-          <p style="font-weight: 500;" class="mr-2">Phone Number:</p>
-          <p>{{ form.get('phone') }}</p>
-      </div>
+      {% if form.get('phone') %}
+        <div class="d-flex mx-auto">
+            <p style="font-weight: 500;" class="mr-2">Phone Number:</p>
+            <p>{{ form.get('phone') }}</p>
+        </div>
+      {% endif %}
       <div class="d-flex mx-auto">
           <p style="font-weight: 500;" class="mr-2">E-Mail:</p>
           <p>{{ form.get('email') }}</p>

@@ -27,3 +27,7 @@ a {
 a:hover {
   color: #7c69e3;
 }
+
+label {
+  font-weight: bold;
+}
