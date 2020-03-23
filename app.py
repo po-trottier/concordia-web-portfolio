@@ -1,8 +1,15 @@
+# Import Flask
 from flask import Flask, render_template, request, redirect, url_for
+
+# Import Python Packages
+import datetime
+
+# Import Extra Dependencies
 from flask_sqlalchemy import SQLAlchemy
-from flask_marshmallow import Marshmallow
 from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
+
+# Import Form Fields & Validators
 from wtforms import StringField, TextAreaField
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import Email, InputRequired
@@ -22,8 +29,38 @@ app.config.from_object('config')
 # Initialize Database
 db = SQLAlchemy(app)
 
-# Initialize Marshmallow
-ma = Marshmallow(app)
+# Initialize Database Models
+class Message(db.Model):
+  id = db.Column(db.Integer, primary_key=True)
+  name = db.Column(db.String(128), nullable=False)
+  phone = db.Column(db.String(16), nullable=True)
+  email = db.Column(db.String(128), nullable=False)
+  message = db.Column(db.Text, nullable=False)
+  sent_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+
+  def __init__(self, name, phone, email, message):
+    self.name = name
+    self.phone = phone
+    self.email = email
+    self.message = message
+
+  def __repr__(self):
+    return '<Message #%r: %r>' % (self.id, self.message)
+
+class Post(db.Model):
+  id = db.Column(db.Integer, primary_key=True)
+  author = db.Column(db.String(128))
+  title = db.Column(db.String(512))
+  content = db.Column(db.Text)
+  published_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+
+  def __init__(self, author, title, content):
+    self.author = author
+    self.title = title
+    self.content = content
+
+  def __repr__(self):
+    return '<Post %r>' % (self.id)
 
 # Create a form validator
 class ContactForm(FlaskForm):
@@ -40,6 +77,11 @@ def home():
   if request.method == "POST":
     # Deal with the form
     if form.validate_on_submit():
+      # Add the message to the DB
+      message = Message(form.name.data, form.phone.data, form.email.data, form.message.data)
+      db.session.add(message)
+      db.session.commit()
+      # Redirect
       return redirect(url_for('contact',
         name=form.name.data,
         phone=form.phone.data,
@@ -69,6 +111,13 @@ def blog():
 def post(post_id):
   # Will need to add logic here
   return render_template('routes/post.html', id=post_id)
+
+# This route is only to show that the database is correctly setup
+@app.route('/admin')
+def admin():
+  results = list(Message.query.all())
+  # Render a list of all the messagesin the DB
+  return render_template('routes/admin.html', messages=results)
 
 # Build the database
 db.create_all()

@@ -9,8 +9,6 @@ pylint = "*"
 [packages]
 flask = "*"
 flask-sqlalchemy = "*"
-flask-marshmallow = "*"
-marshmallow-sqlalchemy = "*"
 wtforms = "*"
 flask-wtf = "*"
 flask-bootstrap = "*"
