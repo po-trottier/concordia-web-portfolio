@@ -1,0 +1,38 @@
+<h2 class="mb-5 text-center">Posts Published</h2>
+{% if posts|length > 0 %}
+  <div class="text-center">
+    {% for p in posts %}
+      <form action="/admin/posts/{{ p.id }}" method="post" class="card p-4 mb-4">
+        <div class="col-12">
+          <div class="row">
+            <p class="col-md-3 text-md-right text-center"><b>ID:</b></p>
+            <p class="col-md-9 text-center text-md-left">{{ p.id }}</p>
+          </div>
+          <div class="row">
+            <p class="col-md-3 text-md-right text-center"><b>Date Published:</b></p>
+            <p class="col-md-9 text-center text-md-left">{{ p.published_at.strftime('%Y-%m-%d') }}</p>
+          </div>
+          <div class="row">
+            <p class="col-md-3 text-md-right text-center"><b>Author:</b></p>
+            <p class="col-md-9 text-center text-md-left">{{ p.author }}</p>
+          </div>
+          <div class="row">
+            <p class="col-md-3 text-md-right text-center"><b>Title:</b></p>
+            <p class="col-md-9 text-center text-md-left">{{ p.title }}</p>
+          </div>
+          <div class="row">
+            <p class="col-md-3 mb-0 text-md-right text-center"><b>Content:</b></p>
+            <p class="col-md-9 text-center text-md-left single-line">{{ p.content }}{{ p.content }}</p>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-outline-danger mt-2">Delete Post</button>
+      </form>
+    {% endfor %}
+    <a href="/admin/add-post" class="btn btn-primary mt-4 px-5">Add a New Post</a>
+  </div>
+{% else %}
+    <div class="card p-4 mb-4">
+      <h4 class="text-center">No Posts Published</h4>
+      <a href="/admin/add-post" class="btn btn-primary mt-4">Add a New Post</a>
+    </div>
+{% endif %}

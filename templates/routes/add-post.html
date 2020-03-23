@@ -1,0 +1,21 @@
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% extends "base.html" %}
+{% block content %}
+  <div class="py-5 container">
+    <h2 class="text-center mb-5">Add a new Post</h2>
+    <form action="/admin/add-post" method="post" class="card p-4">
+      <!--Anti-Robot Field-->
+      {{ form.csrf_token }}
+      <!--Errors list-->
+      {{ wtf.form_errors(form, hiddens="only") }}
+      <!--Form Fields-->
+      {{ wtf.form_field(form.author, class='form-control', placeholder='Enter your name') }}
+      {{ wtf.form_field(form.title, class='form-control', placeholder='Enter the title of your post') }}
+      {{ wtf.form_field(form.content, rows='10', class='form-control', style='min-height: 40px;', placeholder='Enter the post\'s content in plain text format') }}
+      <button type="submit" class="btn btn-primary mt-2">
+        Publish Post
+      </button>
+    </form>
+  </div>
+{% endblock %}

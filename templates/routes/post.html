@@ -1,6 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
   <div class="py-5 container">
-    <h2 class="mb-5 text-center">Blog Post #{{ id }}</h2>
+    <div class="card p-4 p-md-5">
+      <h2 class="mb-2 mb-md-4">{{ post.title }}</h2>
+      <small class="m-0">Published the {{ post.published_at.strftime('%d-%m-%Y') }} at {{ post.published_at.strftime('%H:%M') }}</small>
+      <p class="mb-0" style="font-weight: 500;">Written by: {{ post.author }}</p>
+      <hr class="my-4">
+      {% autoescape false %}
+        <p class="text-justify">{{ post.content | replace("\n", "<br>") }}</p>
+      {% endautoescape %}
+    </div>
   </div>
 {% endblock %}

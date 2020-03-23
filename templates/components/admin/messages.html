@@ -1,0 +1,64 @@
+<h2 class="mb-5 text-center">Messages Received</h2>
+{% if messages|length > 0 %}
+  {% for m in messages %}
+    <form class="card p-4 mb-4" action="/admin/messages/{{ m.id }}" method="post">
+        <div class="col-12">
+          <div class="row">
+            <div class="col-md-3 text-center text-md-right">
+              <p><b>ID:</b></p>
+            </div>
+            <div class="col-md-9 text-center text-md-left">
+              <p>{{ m.id }}</p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-3 text-center text-md-right">
+              <p><b>Date Received:</b></p>
+            </div>
+            <div class="col-md-9 text-center text-md-left">
+              <p>{{ m.sent_at.strftime('%Y-%m-%d') }}</p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-3 text-center text-md-right">
+              <p><b>Name:</b></p>
+            </div>
+            <div class="col-md-9 text-center text-md-left">
+              <p>{{ m.name }}</p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-3 text-center text-md-right">
+              <p><b>Email Address:</b></p>
+            </div>
+            <div class="col-md-9 text-center text-md-left">
+              <a href="mailto:{{ m.email }}" target="_blank"><p>{{ m.email }}</p></a>
+            </div>
+          </div>
+          {% if m.phone %}
+            <div class="row">
+              <div class="col-md-3 text-center text-md-right">
+                <p><b>Phone Number:</b></p>
+              </div>
+              <div class="col-md-9 text-center text-md-left">
+                 <a href="tel:{{ m.phone }}" target="_blank"><p>{{ m.phone }}</p></a>
+              </div>
+            </div>
+          {% endif %}
+        <div class="row">
+            <div class="col-md-3 text-center text-md-right">
+              <p><b>Message:</b></p>
+            </div>
+            <div class="col-md-9 text-center text-md-left">
+              <p>{{ m.message }}</p>
+            </div>
+          </div>
+        </div>
+      <button class="btn btn-outline-primary mt-2" type="submit">Mark as Read</button>
+    </form>
+  {% endfor %}
+{% else %}
+    <div class="card p-4 mb-4">
+      <h4 class="text-center">No Messages Received</h4>
+    </div>
+{% endif %}

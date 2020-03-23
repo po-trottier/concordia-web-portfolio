@@ -2,14 +2,21 @@
 {% block content %}
   <div class="py-5 container">
     <h2 class="mb-5 text-center">Recent Blog Posts</h2>
+  {% if posts|length > 0 %}
     <div class="row">
-      {% for n in range(12) %}
+      {% for p in posts %}
         <div class="col-lg-6">
-          {% with post_id=n %}
-           {% include 'components/blog/preview.html' %} 
+          {% with post=p %}
+           {% include 'components/blog/preview.html' %}
           {% endwith %}
         </div>
       {% endfor %}
     </div>
+  {% else %}
+    <div class="text-center">
+      <h5>There are no posts available yet. Please come back later.</h5>
+      <a href="/" class="btn btn-primary mt-4 px-5">Go Back Home</a>
+    </div>
+  {% endif %}
   </div>
 {% endblock %}

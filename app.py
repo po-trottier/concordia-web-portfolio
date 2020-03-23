@@ -1,3 +1,13 @@
+##################################################################
+#
+# README
+#
+# There is an Admin area that is only linked in the footer.
+# It is located at /admin and let's an admin manage the messages
+# received as well as the posts visible on the website.
+#
+##################################################################
+
 # Import Flask
 from flask import Flask, render_template, request, redirect, url_for
 
@@ -30,6 +40,19 @@ app.config.from_object('config')
 db = SQLAlchemy(app)
 
 # Initialize Database Models
+class User(db.Model):
+  id = db.Column(db.Integer, primary_key=True)
+  email = db.Column(db.String(128), nullable=False)
+  password = db.Column(db.String(512), nullable=False)
+  created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+
+  def __init__(self, email, password):
+    self.email = email
+    self.password = password
+
+  def __repr__(self):
+    return '<User %r>' % (self.email)
+
 class Message(db.Model):
   id = db.Column(db.Integer, primary_key=True)
   name = db.Column(db.String(128), nullable=False)
@@ -62,12 +85,17 @@ class Post(db.Model):
   def __repr__(self):
     return '<Post %r>' % (self.id)
 
-# Create a form validator
+# Create form validators
 class ContactForm(FlaskForm):
   name = StringField('Name:', validators=[InputRequired()])
   phone = StringField('Phone Number:', validators=[])
   email = EmailField('Email Address:', validators=[InputRequired(), Email()])
   message = TextAreaField('Message:', validators=[InputRequired()])
+
+class PostForm(FlaskForm):
+  author = StringField('Author:', validators=[InputRequired()])
+  title = StringField('Title:', validators=[InputRequired()])
+  content = TextAreaField('Content:', validators=[InputRequired()])
 
 # Define the routes
 @app.route('/', methods=['GET', 'POST'])
@@ -94,8 +122,8 @@ def home():
 
 @app.route('/contact')
 def contact():
-  form = { 
-    'name': request.args.get('name'), 
+  form = {
+    'name': request.args.get('name'),
     'phone': request.args.get('phone'),
     'email': request.args.get('email'),
     'message': request.args.get('message')
@@ -104,20 +132,55 @@ def contact():
 
 @app.route('/blog')
 def blog():
-  # Will need to add logic here
-  return render_template('routes/blog.html')
+  posts = Post.query.order_by(Post.published_at.desc()).all()
+  return render_template('routes/blog.html', posts=posts)
 
 @app.route('/post/<int:post_id>')
 def post(post_id):
-  # Will need to add logic here
-  return render_template('routes/post.html', id=post_id)
+  post = Post.query.filter_by(id=post_id).first()
+  return render_template('routes/post.html', post=post)
 
-# This route is only to show that the database is correctly setup
 @app.route('/admin')
 def admin():
-  results = list(Message.query.all())
-  # Render a list of all the messagesin the DB
-  return render_template('routes/admin.html', messages=results)
+  # Query messages and posts
+  messages = list(Message.query.order_by(Message.sent_at.desc()).all())
+  posts = list(Post.query.order_by(Post.published_at.desc()).all())
+  # Render a list of all the messages & posts in the DB
+  return render_template('routes/admin.html', messages=messages, posts=posts)
+
+@app.route('/admin/add-post', methods=['GET', 'POST'])
+def add_post():
+  form = PostForm()
+  # If this is a POST request, we're getting data from the form
+  if request.method == "POST":
+    if form.validate_on_submit():
+      # Add a new post to the DB
+      post = Post(form.author.data, form.title.data, form.content.data)
+      db.session.add(post)
+      db.session.commit()
+      # Render a list of all the messages & posts in the DB
+      return redirect(url_for('admin'))
+  # Otherwise render the add-post page
+  else:
+    return render_template('routes/add-post.html', form=form)
+
+@app.route('/admin/posts/<int:post_id>', methods=['POST'])
+def delete_post(post_id):
+  # Delete the requested message
+  post = Post.query.filter_by(id=post_id).first()
+  db.session.delete(post)
+  db.session.commit()
+  # Render a list of all the messages & posts in the DB
+  return redirect(url_for('admin'))
+
+@app.route('/admin/messages/<int:message_id>', methods=['POST'])
+def delete_message(message_id):
+  # Delete the requested message
+  message = Message.query.filter_by(id=message_id).first()
+  db.session.delete(message)
+  db.session.commit()
+  # Render a list of all the messages & posts in the DB
+  return redirect(url_for('admin'))
 
 # Build the database
 db.create_all()

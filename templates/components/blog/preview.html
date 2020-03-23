@@ -1,16 +1,16 @@
-<a href="{{ url_for('post', post_id=post_id) }}" class="mx-auto">
+<a href="{{ url_for('post', post_id=post.id) }}" class="mx-auto">
   <div class="card p-4 my-4" style="max-width: 700px;">
     <div class="row">
-      <div class="col-5">
-        <img src="https://via.placeholder.com/200x250.png" alt="Placeholder Image" width="100%" height="250px" class="rounded" style="object-fit: cover;">
+      <div class="col-md-5 mb-4 mb-md-0">
+        <img src="https://source.unsplash.com/collection/4676376" alt="Placeholder Image" width="100%" height="250px" class="rounded" style="object-fit: cover;">
       </div>
-      <div class="col-7 align-self-center">
-        <h4 class="m-0">Title</h4>
-        <small class="m-0">Date Published</small>
-        <p class="m-0" style="font-weight: 500;">Written by: Author</p>
+      <div class="col-md-7 align-self-center">
+        <h4 class="m-0">{{ post.title }}</h4>
+        <small class="m-0">Published the {{ post.published_at.strftime('%d-%m-%Y') }} at {{ post.published_at.strftime('%H:%M') }}</small>
+        <p class="m-0" style="font-weight: 500;">Written by: {{ post.author }}</p>
         <hr>
         <p class="m-0 extract">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc sed pellentesque nulla, non pharetra ante. Ut lacus neque, tempus in elit vitae, efficitur luctus purus. Nullam accumsan turpis vitae lectus elementum tincidunt. Donec pulvinar mi ac gravida congue. Cras molestie vel neque condimentum pharetra. Phasellus gravida velit eu lectus hendrerit viverra. Mauris pellentesque euismod purus. Pellentesque pellentesque ex vel sapien consequat, bibendum tempus sapien imperdiet. Aenean tincidunt, massa sed suscipit imperdiet, elit augue tincidunt ipsum, mollis tincidunt nulla est sed purus. Ut fermentum eget lorem non sagittis. Fusce tempus erat nec facilisis ornare. Morbi efficitur pulvinar ante, at pulvinar orci mattis ut. In elementum libero dolor, id rhoncus neque vehicula sed. Nunc egestas volutpat consectetur. Quisque iaculis vehicula ex at tempus.
+          {{ post.content }}
         </p>
       </div>
     </div>
