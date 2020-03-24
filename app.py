@@ -357,6 +357,11 @@ def delete_message(message_id):
   # Render a list of all the messages & posts in the DB
   return redirect(url_for('admin'))
 
+@app.errorhandler(404)
+def page_not_found(e):
+    # note that we set the 404 status explicitly
+    return render_template('routes/404.html'), 404
+
 # Build the database tables
 db.create_all()
 

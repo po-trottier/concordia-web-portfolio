@@ -1,0 +1,12 @@
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% extends "base.html" %}
+{% block content %}
+  <div class="py-5 container">
+    <div class="card p-4 mx-auto">
+      <h2 class="text-center mb-5">Oops! You shouldn't be here!</h2>
+      <p class="text-center" style="font-weight: 500;">This is not a valid page. Please go back to the home page to find your way back.</p>
+      <a href="{{ url_for('home') }}" class="mt-3 btn btn-primary">Go Back Home</a>
+    </div>
+  </div>
+{% endblock %}
