@@ -54,7 +54,19 @@
   height: 100vh;
   width: 100%;
   margin-top: -75px;
-  object-fit: cover;
+	background: linear-gradient(90deg, rgba(38, 35, 75, 0.7), rgba(124, 105, 227, 0.5), rgba(27, 194, 202, 0.3), rgba(38, 35, 75, 0.7), rgba(220, 147, 228, 0.3), rgba(38, 35, 75, 0.7)) 0 0 / 1000% no-repeat, url('/images/hero.jpg') 0 0 / cover no-repeat;
+	-webkit-animation: gradientAnimation 20s linear infinite alternate-reverse;
+	animation: gradientAnimation 20s linear infinite alternate-reverse;
+}
+
+@-webkit-keyframes gradientAnimation {
+	0%   { background-position: 0% 30%, 0 0;}
+	100%  { background-position: 100% 70%, 0 0;}
+}
+
+@keyframes gradientAnimation {
+	0%   { background-position: 0% 30%, 0 0;}
+	100%  { background-position: 100% 70%, 0 0;}
 }
 
 .hero-content {
