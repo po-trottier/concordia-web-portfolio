@@ -121,21 +121,27 @@ class PostForm(FlaskForm):
 def load_user(user_id):
     return User.query.filter_by(email=user_id).first()
 
-@app.route('/register')
+@app.route('/register', methods=['GET', 'POST'])
 @login_required
 def register():
-  email = request.args.get('email')
-  password = request.args.get('pass')
-  if not email or not password:
-    return 'Invalid Request'
-  if User.query.filter_by(email=email).first():
-    return 'User already exists'
-  salt = bcrypt.gensalt()
-  hash = bcrypt.hashpw(password.encode(), salt)
-  user = User(email, hash)
-  db.session.add(user)
-  db.session.commit()
-  return 'Success'
+  form = LoginForm()
+  if request.method == "POST":
+    if form.validate_on_submit():
+      if User.query.filter_by(email=form.email.data).first():
+        flash('User already exists. Please use a different email.')
+        return render_template('routes/signup.html', form=form)
+      salt = bcrypt.gensalt()
+      hash = bcrypt.hashpw(form.password.data.encode(), salt)
+      user = User(form.email.data, hash)
+      db.session.add(user)
+      db.session.commit()
+      flash('User successfully created.')
+      return redirect(url_for('admin'))
+    else:
+      flash('Invalid Form Data')
+      return render_template('routes/signup.html', form=form)
+  else:
+    return render_template('routes/signup.html', form=form)
 
 # Define the routes
 @app.route('/', methods=['GET', 'POST'])
@@ -157,7 +163,8 @@ def home():
         message=form.message.data
       ))
     else:
-      return flash('Invalid Form Data')
+      flash('Invalid Form Data')
+      return render_template('routes/index.html', form=form)
   else:
     # Return the index.html file for any other type of request
     return render_template('routes/index.html', form=form)
@@ -197,7 +204,8 @@ def login():
         flash('Incorrect email or password')
         return render_template('routes/login.html', form=form)
     else:
-      return flash('Invalid Form Data')
+      flash('Invalid Form Data')
+      return render_template('routes/login.html', form=form)
   else:
     return render_template('routes/login.html', form=form)
 
@@ -230,7 +238,8 @@ def add_post():
       # Render a list of all the messages & posts in the DB
       return redirect(url_for('admin'))
     else:
-      return flash('Invalid Form Data')
+      flash('Invalid Form Data')
+      return render_template('routes/add-post.html', form=form)
   # Otherwise render the add-post page
   else:
     return render_template('routes/add-post.html', form=form)

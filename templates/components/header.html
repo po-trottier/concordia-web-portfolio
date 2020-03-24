@@ -8,6 +8,11 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav ml-auto">
+        {% if current_user.is_authenticated %}
+          <li class="nav-item active">
+            <a data-scroll class="nav-link text-uppercase" style="opacity: 0.5;" href="{{ url_for('admin', _external=True) }}">Admin Area</a>
+          </li>
+        {% endif %}
         <li class="nav-item active">
           <a data-scroll class="nav-link text-uppercase" href="{{ url_for('home', _external=True) }}#about">About Me</a>
         </li>
