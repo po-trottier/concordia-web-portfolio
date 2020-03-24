@@ -128,3 +128,6 @@ dmypy.json
 
 # PyCharm Config
 .idea/
+
+# Flask Config
+config.py

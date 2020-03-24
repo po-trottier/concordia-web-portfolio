@@ -30,7 +30,7 @@
   <link rel="stylesheet" href="/css/style.css">
 </head>
 
-<body>
+<body style="width: 100vw !important; overflow-x: hidden;">
   <div class="fill-height bg-light">
     <header class="header">
       {% include 'components/header.html' %}
@@ -43,7 +43,7 @@
         {% if messages %}
           <div>
             {% for message in messages %}
-              <div id="flash-{{ loop.index }}" class="card bg-primary p-3 mb-2" style="min-width: 500px;">
+              <div id="flash-{{ loop.index }}" class="card bg-primary p-3 mb-2" style="width: 500px; max-width: 90vw !important;">
                 <div class="row">
                   <div class="col-11">
                     <span class="text-white text-center" style="max-width: 600px;">{{ message }}</span>

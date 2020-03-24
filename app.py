@@ -19,12 +19,14 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 # Import Python Packages
 import datetime
 import bcrypt
+import uuid
 
 # Import Extra Dependencies
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
 from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user
+from mailjet_rest import Client
 
 # Import Form Fields & Validators
 from wtforms import StringField, TextAreaField
@@ -57,6 +59,7 @@ class User(db.Model, UserMixin):
   id = db.Column(db.Integer(), primary_key=True)
   email = db.Column(db.String(128), nullable=False, unique=True)
   password = db.Column(db.String(64), nullable=False)
+  reset_token = db.Column(db.String(64), nullable=True)
   created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
   def get_id(self):
@@ -106,6 +109,10 @@ class LoginForm(FlaskForm):
   email = EmailField('Email:', validators=[InputRequired(), Email()])
   password = PasswordField('Password:', validators=[InputRequired()])
 
+class ResetForm(FlaskForm):
+  name = StringField('Name:', validators=[InputRequired()])
+  email = EmailField('Email:', validators=[InputRequired(), Email()])
+
 class ContactForm(FlaskForm):
   name = StringField('Name:', validators=[InputRequired()])
   phone = StringField('Phone Number:', validators=[])
@@ -120,28 +127,6 @@ class PostForm(FlaskForm):
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.filter_by(email=user_id).first()
-
-@app.route('/register', methods=['GET', 'POST'])
-@login_required
-def register():
-  form = LoginForm()
-  if request.method == "POST":
-    if form.validate_on_submit():
-      if User.query.filter_by(email=form.email.data).first():
-        flash('User already exists. Please use a different email.')
-        return render_template('routes/signup.html', form=form)
-      salt = bcrypt.gensalt()
-      hash = bcrypt.hashpw(form.password.data.encode(), salt)
-      user = User(form.email.data, hash)
-      db.session.add(user)
-      db.session.commit()
-      flash('User successfully created.')
-      return redirect(url_for('admin'))
-    else:
-      flash('Invalid Form Data')
-      return render_template('routes/signup.html', form=form)
-  else:
-    return render_template('routes/signup.html', form=form)
 
 # Define the routes
 @app.route('/', methods=['GET', 'POST'])
@@ -195,6 +180,9 @@ def login():
   if request.method == "POST":
     if form.validate_on_submit():
       user = User.query.filter_by(email=form.email.data).first()
+      if user.reset_token:
+        user.reset_token = None
+        db.session.commit()
       if user and bcrypt.checkpw(form.password.data.encode(), user.password):
         login_user(User.query.filter_by(email=form.email.data).first(), remember=True)
         next_page = session.get('next', url_for('home'))
@@ -214,6 +202,86 @@ def logout():
   logout_user()
   flash('Succesfully logged out!')
   return redirect(url_for('home'))
+
+@app.route('/register', methods=['GET', 'POST'])
+@login_required
+def register():
+  form = LoginForm()
+  if request.method == "POST":
+    if form.validate_on_submit():
+      if User.query.filter_by(email=form.email.data).first():
+        flash('User already exists. Please use a different email.')
+        return render_template('routes/signup.html', form=form)
+      salt = bcrypt.gensalt()
+      hash = bcrypt.hashpw(form.password.data.encode(), salt)
+      user = User(form.email.data, hash)
+      db.session.add(user)
+      db.session.commit()
+      flash('User successfully created.')
+      return redirect(url_for('admin'))
+    else:
+      flash('Invalid Form Data')
+      return render_template('routes/signup.html', form=form)
+  else:
+    return render_template('routes/signup.html', form=form)
+
+@app.route('/reset', methods=['GET', 'POST'])
+def reset():
+  form = ResetForm()
+  if request.method == "POST":
+    if form.validate_on_submit():
+      user = User.query.filter_by(email=form.email.data).first()
+      if not user:
+        flash('There are no users associated with the email provided')
+        return render_template('routes/reset.html', form=form)
+      token = uuid.uuid4().hex[:16].lower()
+      user.reset_token = token
+      db.session.commit()
+      url = request.url_root + 'reset/' + token
+      mailjet = Client(auth=(app.config["MAILJET_API_KEY"], app.config["MAILJET_API_SECRET"]), version='v3.1')
+      data = {
+        'Messages': [
+          {
+            "From": { "Email": "po.trottier@gmail.com", "Name": "Pierre-Olivier" },
+            "To": [{ "Email": form.email.data }],
+            "Subject": "[PO_Design] Password Reset Link",
+            "HTMLPart": "<h2>Hello " + form.name.data + ",</h2><p>We recently received a password reset request regarding your account as a PO_Design administrator.</p><p>To reset your password, please open the following link in your web browser.</p><a href=" + url + ">" + url + "</a>"
+          }
+        ]
+      }
+      mailjet.send.create(data=data)
+      flash('The recovery email was successfully sent')
+      return redirect(url_for('login'))
+    else:
+      flash('Invalid Form Data')
+      return render_template('routes/reset.html', form=form)
+  else:
+    return render_template('routes/reset.html', form=form)
+
+@app.route('/reset/<reset_token>', methods=['GET', 'POST'])
+def change(reset_token):
+  form = LoginForm()
+  if request.method == "POST":
+    if form.validate_on_submit():
+      user = User.query.filter_by(email=form.email.data).first()
+      if not user:
+        flash('There are no users associated with the email provided')
+        return render_template('routes/change.html', form=form)
+      if not user.reset_token == reset_token:
+        flash('The reset token for the requested user has been invalidated')
+        return redirect(url_for('login'))
+      salt = bcrypt.gensalt()
+      hash = bcrypt.hashpw(form.password.data.encode(), salt)
+      user.password = hash
+      user.reset_token = None
+      db.session.commit()
+      flash('The password was successfully changed')
+      return redirect(url_for('login'))
+    else:
+      flash('Invalid Form Data')
+      return render_template('routes/change.html', form=form)
+  else:
+    return render_template('routes/change.html', form=form, reset_token=reset_token)
 
 @app.route('/admin')
 @login_required
