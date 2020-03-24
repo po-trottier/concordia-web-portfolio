@@ -13,3 +13,6 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # Secret key for signing cookies
 SECRET_KEY = 'T^Bru8XwE4WYatyxIRP*T1QA#GZ%b7NS'
+
+# Login Manager Option
+USE_SESSION_FOR_NEXT = True

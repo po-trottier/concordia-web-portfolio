@@ -2,7 +2,7 @@
 {% if posts|length > 0 %}
   <div class="text-center">
     {% for p in posts %}
-      <form action="/admin/posts/{{ p.id }}" method="post" class="card p-4 mb-4">
+      <form action="/admin/posts/{{ p.id }}" method="post" class="card p-4 mb-5">
         <div class="col-12">
           <div class="row">
             <p class="col-md-3 text-md-right text-center"><b>ID:</b></p>
@@ -25,10 +25,15 @@
             <p class="col-md-9 text-center text-md-left single-line">{{ p.content }}{{ p.content }}</p>
           </div>
         </div>
-        <button type="submit" class="btn btn-outline-danger mt-2">Delete Post</button>
+        <button type="submit" class="btn btn-outline-primary mt-2">Delete Post</button>
       </form>
     {% endfor %}
-    <a href="/admin/add-post" class="btn btn-primary mt-4 px-5">Add a New Post</a>
+    <a href="/admin/add-post">
+      <button class="btn btn-primary p-2 rounded-circle">
+        <i class="mdi mdi-plus text-white"></i>
+      </button>
+      <p style="font-weight: 500;" class="mt-2">Add a Post</p>
+    </a>
   </div>
 {% else %}
     <div class="card p-4 mb-4">

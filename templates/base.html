@@ -38,6 +38,26 @@
     <section class="content">
       {% block content %}{% endblock %}
     </section>
+    <div id="flash">
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <div>
+            {% for message in messages %}
+              <div id="flash-{{ loop.index }}" class="card bg-primary p-3 mb-2" style="min-width: 500px;">
+                <div class="row">
+                  <div class="col-11">
+                    <span class="text-white text-center" style="max-width: 600px;">{{ message }}</span>
+                  </div>
+                  <button class="col-1 px-0 btn py-0" onclick="document.getElementById('flash-{{ loop.index }}').remove()">
+                    <i class="mdi mdi-close text-white mx-auto"></i>
+                  </button>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+    </div>
     <footer class="footer">
       {% include 'components/footer.html' %}
     </footer>

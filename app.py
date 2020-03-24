@@ -6,21 +6,29 @@
 # It is located at /admin and let's an admin manage the messages
 # received as well as the posts visible on the website.
 #
+# Default Account
+#
+# Email: test@test.com
+# Password: test
+#
 ##################################################################
 
 # Import Flask
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 
 # Import Python Packages
 import datetime
+import bcrypt
 
 # Import Extra Dependencies
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
+from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user
 
 # Import Form Fields & Validators
 from wtforms import StringField, TextAreaField
+from wtforms.fields import PasswordField
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import Email, InputRequired
 
@@ -29,6 +37,11 @@ app = Flask(__name__,
             static_url_path='',
             static_folder='assets',
             template_folder='templates')
+
+#Initialize the Login Manager
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
 
 # Configure Bootstrap
 Bootstrap(app)
@@ -40,11 +53,14 @@ app.config.from_object('config')
 db = SQLAlchemy(app)
 
 # Initialize Database Models
-class User(db.Model):
-  id = db.Column(db.Integer, primary_key=True)
-  email = db.Column(db.String(128), nullable=False)
-  password = db.Column(db.String(512), nullable=False)
+class User(db.Model, UserMixin):
+  id = db.Column(db.Integer(), primary_key=True)
+  email = db.Column(db.String(128), nullable=False, unique=True)
+  password = db.Column(db.String(64), nullable=False)
   created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+
+  def get_id(self):
+    return self.email
 
   def __init__(self, email, password):
     self.email = email
@@ -86,6 +102,10 @@ class Post(db.Model):
     return '<Post %r>' % (self.id)
 
 # Create form validators
+class LoginForm(FlaskForm):
+  email = EmailField('Email:', validators=[InputRequired(), Email()])
+  password = PasswordField('Password:', validators=[InputRequired()])
+
 class ContactForm(FlaskForm):
   name = StringField('Name:', validators=[InputRequired()])
   phone = StringField('Phone Number:', validators=[])
@@ -96,6 +116,26 @@ class PostForm(FlaskForm):
   author = StringField('Author:', validators=[InputRequired()])
   title = StringField('Title:', validators=[InputRequired()])
   content = TextAreaField('Content:', validators=[InputRequired()])
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.filter_by(email=user_id).first()
+
+@app.route('/register')
+@login_required
+def register():
+  email = request.args.get('email')
+  password = request.args.get('pass')
+  if not email or not password:
+    return 'Invalid Request'
+  if User.query.filter_by(email=email).first():
+    return 'User already exists'
+  salt = bcrypt.gensalt()
+  hash = bcrypt.hashpw(password.encode(), salt)
+  user = User(email, hash)
+  db.session.add(user)
+  db.session.commit()
+  return 'Success'
 
 # Define the routes
 @app.route('/', methods=['GET', 'POST'])
@@ -116,6 +156,8 @@ def home():
         email=form.email.data,
         message=form.message.data
       ))
+    else:
+      return flash('Invalid Form Data')
   else:
     # Return the index.html file for any other type of request
     return render_template('routes/index.html', form=form)
@@ -140,7 +182,33 @@ def post(post_id):
   post = Post.query.filter_by(id=post_id).first()
   return render_template('routes/post.html', post=post)
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+  form = LoginForm()
+  if request.method == "POST":
+    if form.validate_on_submit():
+      user = User.query.filter_by(email=form.email.data).first()
+      if user and bcrypt.checkpw(form.password.data.encode(), user.password):
+        login_user(User.query.filter_by(email=form.email.data).first(), remember=True)
+        next_page = session.get('next', url_for('home'))
+        session['next'] = url_for('home')
+        return redirect(next_page)
+      else:
+        flash('Incorrect email or password')
+        return render_template('routes/login.html', form=form)
+    else:
+      return flash('Invalid Form Data')
+  else:
+    return render_template('routes/login.html', form=form)
+
+@app.route('/logout')
+def logout():
+  logout_user()
+  flash('Succesfully logged out!')
+  return redirect(url_for('home'))
+
 @app.route('/admin')
+@login_required
 def admin():
   # Query messages and posts
   messages = list(Message.query.order_by(Message.sent_at.desc()).all())
@@ -149,6 +217,7 @@ def admin():
   return render_template('routes/admin.html', messages=messages, posts=posts)
 
 @app.route('/admin/add-post', methods=['GET', 'POST'])
+@login_required
 def add_post():
   form = PostForm()
   # If this is a POST request, we're getting data from the form
@@ -160,11 +229,14 @@ def add_post():
       db.session.commit()
       # Render a list of all the messages & posts in the DB
       return redirect(url_for('admin'))
+    else:
+      return flash('Invalid Form Data')
   # Otherwise render the add-post page
   else:
     return render_template('routes/add-post.html', form=form)
 
 @app.route('/admin/posts/<int:post_id>', methods=['POST'])
+@login_required
 def delete_post(post_id):
   # Delete the requested message
   post = Post.query.filter_by(id=post_id).first()
@@ -174,6 +246,7 @@ def delete_post(post_id):
   return redirect(url_for('admin'))
 
 @app.route('/admin/messages/<int:message_id>', methods=['POST'])
+@login_required
 def delete_message(message_id):
   # Delete the requested message
   message = Message.query.filter_by(id=message_id).first()

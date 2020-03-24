@@ -1,6 +1,20 @@
+{% import "bootstrap/wtf.html" as wtf %}
+
 {% extends "base.html" %}
 {% block content %}
   <div class="py-5 container">
-    <h2>Login</h2>
+    <h2 class="text-center mb-5">Administrator Login</h2>
+    <form action="/login" method="post" class="card p-4 mx-auto" style="max-width: 700px;">
+      <!--Anti-Robot Field-->
+      {{ form.csrf_token }}
+      <!--Errors list-->
+      {{ wtf.form_errors(form, hiddens="only") }}
+      <!--Form Fields-->
+      {{ wtf.form_field(form.email, class='form-control', placeholder='Enter your email') }}
+      {{ wtf.form_field(form.password, class='form-control', placeholder='Enter your password') }}
+      <button type="submit" class="btn btn-primary mt-2">
+        Sign In
+      </button>
+    </form>
   </div>
 {% endblock %}
