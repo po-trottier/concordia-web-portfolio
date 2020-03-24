@@ -104,7 +104,7 @@ class Post(db.Model):
   def __repr__(self):
     return '<Post %r>' % (self.id)
 
-# Create form validators
+# Create forms
 class LoginForm(FlaskForm):
   email = EmailField('Email:', validators=[InputRequired(), Email()])
   password = PasswordField('Password:', validators=[InputRequired()])
@@ -124,15 +124,17 @@ class PostForm(FlaskForm):
   title = StringField('Title:', validators=[InputRequired()])
   content = TextAreaField('Content:', validators=[InputRequired()])
 
+# Set custom load_user method for flask-login
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.filter_by(email=user_id).first()
 
-# Define the routes
+# Define the routes for the app
+# Home page
 @app.route('/', methods=['GET', 'POST'])
 def home():
   form = ContactForm()
-  # If we receive a POST request then it's a form submission
+  # If we receive a POST request then it's a contact form submission
   if request.method == "POST":
     # Deal with the form
     if form.validate_on_submit():
@@ -140,7 +142,7 @@ def home():
       message = Message(form.name.data, form.phone.data, form.email.data, form.message.data)
       db.session.add(message)
       db.session.commit()
-      # Redirect
+      # Redirect to success page
       return redirect(url_for('contact',
         name=form.name.data,
         phone=form.phone.data,
@@ -154,6 +156,7 @@ def home():
     # Return the index.html file for any other type of request
     return render_template('routes/index.html', form=form)
 
+# Successfully sent message page
 @app.route('/contact')
 def contact():
   form = {
@@ -164,26 +167,33 @@ def contact():
   }
   return render_template('routes/contact.html', form=form)
 
+# Contains blog posts
 @app.route('/blog')
 def blog():
   posts = Post.query.order_by(Post.published_at.desc()).all()
   return render_template('routes/blog.html', posts=posts)
 
+# Single blog post
 @app.route('/post/<int:post_id>')
 def post(post_id):
   post = Post.query.filter_by(id=post_id).first()
   return render_template('routes/post.html', post=post)
 
+# Login as an admin
 @app.route('/login', methods=['GET', 'POST'])
 def login():
   form = LoginForm()
+  # If the request is a POST request then it's a form submission
   if request.method == "POST":
     if form.validate_on_submit():
       user = User.query.filter_by(email=form.email.data).first()
-      if user.reset_token:
-        user.reset_token = None
-        db.session.commit()
+      # If the user exists and the password is valid then log in
       if user and bcrypt.checkpw(form.password.data.encode(), user.password):
+        # When a user logs in, remove any pending reset_token
+        if user.reset_token:
+          user.reset_token = None
+          db.session.commit()
+        # Log in user and remember in the cookies
         login_user(User.query.filter_by(email=form.email.data).first(), remember=True)
         next_page = session.get('next', url_for('home'))
         session['next'] = url_for('home')
@@ -197,18 +207,22 @@ def login():
   else:
     return render_template('routes/login.html', form=form)
 
+# Log out user
 @app.route('/logout')
 def logout():
   logout_user()
   flash('Succesfully logged out!')
   return redirect(url_for('home'))
 
+# Create a new administrator
 @app.route('/register', methods=['GET', 'POST'])
 @login_required
 def register():
   form = LoginForm()
+  # If the request is a POST request then it's a form submission
   if request.method == "POST":
     if form.validate_on_submit():
+      # Make sure the emails are unique
       if User.query.filter_by(email=form.email.data).first():
         flash('User already exists. Please use a different email.')
         return render_template('routes/signup.html', form=form)
@@ -225,19 +239,24 @@ def register():
   else:
     return render_template('routes/signup.html', form=form)
 
+# Reset forgotten password
 @app.route('/reset', methods=['GET', 'POST'])
 def reset():
   form = ResetForm()
+  # If the request is a POST request then it's a form submission
   if request.method == "POST":
     if form.validate_on_submit():
       user = User.query.filter_by(email=form.email.data).first()
       if not user:
         flash('There are no users associated with the email provided')
         return render_template('routes/reset.html', form=form)
+      # Generate a unique ID that will serve as reset_token
       token = uuid.uuid4().hex[:16].lower()
       user.reset_token = token
       db.session.commit()
+      # Create the reset URL dynamically
       url = request.url_root + 'reset/' + token
+      # Send the email using MailJet
       mailjet = Client(auth=(app.config["MAILJET_API_KEY"], app.config["MAILJET_API_SECRET"]), version='v3.1')
       data = {
         'Messages': [
@@ -258,9 +277,11 @@ def reset():
   else:
     return render_template('routes/reset.html', form=form)
 
+# Password change page
 @app.route('/reset/<reset_token>', methods=['GET', 'POST'])
 def change(reset_token):
   form = LoginForm()
+  # If the request is a POST request then it's a form submission
   if request.method == "POST":
     if form.validate_on_submit():
       user = User.query.filter_by(email=form.email.data).first()
@@ -283,6 +304,7 @@ def change(reset_token):
   else:
     return render_template('routes/change.html', form=form, reset_token=reset_token)
 
+# Administration Dashbard
 @app.route('/admin')
 @login_required
 def admin():
@@ -292,11 +314,12 @@ def admin():
   # Render a list of all the messages & posts in the DB
   return render_template('routes/admin.html', messages=messages, posts=posts)
 
+# Add a new post to the blog
 @app.route('/admin/add-post', methods=['GET', 'POST'])
 @login_required
 def add_post():
   form = PostForm()
-  # If this is a POST request, we're getting data from the form
+  # If the request is a POST request then it's a form submission
   if request.method == "POST":
     if form.validate_on_submit():
       # Add a new post to the DB
@@ -312,6 +335,7 @@ def add_post():
   else:
     return render_template('routes/add-post.html', form=form)
 
+# Delete a given post
 @app.route('/admin/posts/<int:post_id>', methods=['POST'])
 @login_required
 def delete_post(post_id):
@@ -322,6 +346,7 @@ def delete_post(post_id):
   # Render a list of all the messages & posts in the DB
   return redirect(url_for('admin'))
 
+# Delete a given message
 @app.route('/admin/messages/<int:message_id>', methods=['POST'])
 @login_required
 def delete_message(message_id):
@@ -332,7 +357,8 @@ def delete_message(message_id):
   # Render a list of all the messages & posts in the DB
   return redirect(url_for('admin'))
 
-# Build the database
+# Build the database tables
 db.create_all()
 
+# Run the debug server
 app.run(host='127.0.0.1', port=5000, debug=True)
